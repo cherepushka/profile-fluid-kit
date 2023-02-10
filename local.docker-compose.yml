@@ -1,0 +1,38 @@
+version: '3.8'
+
+volumes:
+  profile-fluid_data: {}
+
+services:
+
+  apache-php:
+    volumes:
+      - ./apache-php/htdocs:/var/www/html:ro
+
+  mariadb:
+    container_name: profile-fluid_mariadb
+    restart: always
+    build:
+      context: ./mariadb
+    command: [
+      'mysqld',
+      '--collation-server=utf8_general_ci', 
+      '--character-set-server=utf8'
+    ]
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: '*'
+    ports:
+      - ${MYSQL_EXTARNAL_PORT}:3306
+    volumes:
+      - 'profile-fluid_data:/var/lib/mysql'
+      - './logs/mysql:/var/log/mysql'
+    networks:
+      - profile-fluid
+
+networks:
+  profile-fluid:
+    name: profile-fluid

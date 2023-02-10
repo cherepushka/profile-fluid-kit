@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+
+  certbot:
+    image: certbot/certbot
+    user: ${UID:-1000}:${GID:-1000}
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/logs:/var/log/letsencrypt
+
+  apache-php:
+    container_name: profile-fluid_apache-php
+    restart: always
+    depends_on: 
+      - certbot
+    build:
+      context: ./apache-php
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - APACHE_STATUS_USER=${APACHE_STATUS_USER:-test}
+        - APACHE_STATUS_PASSWORD=${APACHE_STATUS_PASSWORD:-test}
+      target: ${ENV}
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    labels:
+      - traefik.enable=true
+      # https://doc.traefik.io/traefik/routing/providers/docker/#routers
+      - traefik.http.routers.fluid-profile-router.rule=Host(`fluid-profile.indocker.app`)
+      - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
+      # https://doc.traefik.io/traefik/routing/providers/docker/#services
+      - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
+    networks:
+      - profile-fluid
+      - REVERSE_PROXY_ACCESS
+      - indocker-app-network
+    security_opt: [no-new-privileges:true]
+
+  prometheus-apache-exporter:
+    image: bitnami/apache-exporter:latest
+    container_name: profile-fluid_prometheus-apache-exporter
+    depends_on:
+      - apache-php
+    command:
+      - --log.level=info
+      - --insecure
+      - --telemetry.address=0.0.0.0:9117
+      - --telemetry.endpoint=/metrics
+      - --scrape_uri=http://${APACHE_STATUS_USER:-test}:${APACHE_STATUS_PASSWORD:-test}@apache-php/server-status/?auto
+    networks:
+      - profile-fluid
+
+networks:
+  REVERSE_PROXY_ACCESS:
+    name: REVERSE_PROXY_ACCESS
+  profile-fluid:
+    name: profile-fluid
+  indocker-app-network:
+    external: true
