@@ -7,7 +7,7 @@ services:
 
   apache-php:
     volumes:
-      - ./apache-php/htdocs:/var/www/html:ro
+      - ./apache-php/htdocs:/var/www/html
 
   mariadb:
     container_name: profile-fluid_mariadb
@@ -26,7 +26,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_ROOT_HOST: '*'
     ports:
-      - ${MYSQL_EXTARNAL_PORT}:3306
+      - ${DB_EXTERNAL_PORT}:3306
     volumes:
       - 'profile-fluid_data:/var/lib/mysql'
       - './logs/mysql:/var/log/mysql'
