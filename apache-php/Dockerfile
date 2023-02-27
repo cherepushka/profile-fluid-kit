@@ -11,6 +11,8 @@ ARG APACHE_STATUS_PASSWORD
 ENV APACHE_STATUS_USER=${APACHE_STATUS_USER}
 ENV APACHE_STATUS_PASSWORD=${APACHE_STATUS_PASSWORD}
 
+COPY ./sites-enabled/profile-fluid.conf /etc/apache2/sites-enabled/profile-fluid.conf
+
 RUN apt update
 
 # Устанавливаем зависимости для сборки
@@ -44,8 +46,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 # === DEV ===
 FROM apache AS dev
 
-COPY ./sites-enabled/dev/profile-fluid.conf /etc/apache2/sites-enabled/profile-fluid.conf
-
 USER www-data
 
 COPY ./htdocs /var/www/html
@@ -53,8 +53,6 @@ COPY ./htdocs /var/www/html
 
 # === PROD ===
 FROM apache AS prod
-
-COPY ./sites-enabled/prod/profile-fluid.conf /etc/apache2/sites-enabled/profile-fluid.conf
 
 USER www-data
 
