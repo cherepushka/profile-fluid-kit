@@ -8,6 +8,17 @@ services:
   apache-php:
     volumes:
       - ./apache-php/htdocs:/var/www/html
+    labels:
+      - traefik.enable=true
+      # обязательно, если к контейнеру подключено несколько `networks`
+      - traefik.docker.network=indocker-app-network
+      # https://doc.traefik.io/traefik/routing/providers/docker/#routers
+      - traefik.http.routers.fluid-profile-router.rule=Host(`fluid-profile.indocker.app`)
+      - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
+      # https://doc.traefik.io/traefik/routing/providers/docker/#services
+      - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
+    networks:
+      - indocker-app-network
 
   mariadb:
     container_name: profile-fluid_mariadb
@@ -36,3 +47,5 @@ services:
 networks:
   profile-fluid:
     name: profile-fluid
+  indocker-app-network:
+    external: true

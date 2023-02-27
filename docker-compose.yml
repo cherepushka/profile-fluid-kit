@@ -26,17 +26,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt:ro
       - ./certbot/www:/var/www/certbot:ro
-    labels:
-      - traefik.enable=true
-      # обязательно, если к контейнеру подключено несколько `networks`
-      - traefik.docker.network=indocker-app-network
-      # https://doc.traefik.io/traefik/routing/providers/docker/#routers
-      - traefik.http.routers.fluid-profile-router.rule=Host(`fluid-profile.indocker.app`)
-      - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
-      # https://doc.traefik.io/traefik/routing/providers/docker/#services
-      - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
     networks:
-      - indocker-app-network
       - profile-fluid
     security_opt: [no-new-privileges:true]
 
@@ -57,5 +47,3 @@ services:
 networks:
   profile-fluid:
     name: profile-fluid
-  indocker-app-network:
-    external: true
