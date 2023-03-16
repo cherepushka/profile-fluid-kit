@@ -31,6 +31,9 @@ RUN htpasswd -cb /etc/apache2/.htpasswd ${APACHE_STATUS_USER} ${APACHE_STATUS_PA
 RUN usermod -u ${UID} www-data
 RUN groupmod -g ${GID} www-data
 
+RUN usermod -d /var/www www-data
+RUN chown -R www-data:www-data /var/www
+
 COPY ./apache2.conf /etc/apache2/apache2.conf
 COPY ./mods-enabled/php.conf /etc/apache2/mods-enabled/php.conf
 
