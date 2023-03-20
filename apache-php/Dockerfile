@@ -51,7 +51,7 @@ FROM apache AS dev
 
 USER www-data
 
-COPY ./htdocs /var/www/html
+WORKDIR /var/www/html
 # === /DEV ===
 
 # === PROD ===
@@ -59,13 +59,5 @@ FROM apache AS prod
 
 USER www-data
 
-COPY ./htdocs /var/www/html
-
 WORKDIR /var/www/html
-
-RUN composer install
-
-RUN npm install
-
-RUN npm run prod
 # === /PROD ===

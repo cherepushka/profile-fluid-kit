@@ -1,19 +1,12 @@
 version: '3.8'
 
+volumes:
+  profile-fluid_data: {}
+
 services:
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/logs:/var/log/letsencrypt
-
   apache-php:
     container_name: profile-fluid_apache-php
     restart: always
-    depends_on: 
-      - certbot
     build:
       context: ./apache-php
       args:
@@ -23,8 +16,7 @@ services:
         - APACHE_STATUS_PASSWORD=${APACHE_STATUS_PASSWORD:-test}
       target: ${ENV}
     volumes:
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
+      - ./apache-php/htdocs:/var/www/html
     networks:
       - profile-fluid
     security_opt: [no-new-privileges:true]
@@ -40,6 +32,30 @@ services:
       - --telemetry.address=0.0.0.0:9117
       - --telemetry.endpoint=/metrics
       - --scrape_uri=http://${APACHE_STATUS_USER:-test}:${APACHE_STATUS_PASSWORD:-test}@apache-php/server-status/?auto
+    networks:
+      - profile-fluid
+
+  mariadb:
+    container_name: profile-fluid_mariadb
+    restart: always
+    build:
+      context: ./mariadb
+    command: [
+      'mysqld',
+      '--collation-server=utf8_general_ci', 
+      '--character-set-server=utf8'
+    ]
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: '*'
+    ports:
+      - ${DB_EXTERNAL_PORT}:3306
+    volumes:
+      - 'profile-fluid_data:/var/lib/mysql'
+      - './logs/mysql:/var/log/mysql'
     networks:
       - profile-fluid
 

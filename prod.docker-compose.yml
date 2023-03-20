@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  apache-php:
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=ingress_proxy
+      - traefik.http.routers.fluid-profile-router.rule=Host(`profile.fluid-line.ru`)
+      - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
+      - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
+    networks:
+      - ingress_proxy
+
+networks:
+  ingress_proxy:
+    name: ingress_proxy
+    external: true

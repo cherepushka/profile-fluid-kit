@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  apache-php:
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=indocker-app-network
+      - traefik.http.routers.fluid-profile-router.rule=Host(`fluid-profile.indocker.app`)
+      - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
+      - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
+    networks:
+      - indocker-app-network
+
+networks:
+  indocker-app-network:
+    external: true
