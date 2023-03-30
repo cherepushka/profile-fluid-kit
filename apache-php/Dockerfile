@@ -1,5 +1,5 @@
 # === APACHE ===
-FROM php:8.1.15-apache-bullseye as apache
+FROM php:8.1.15-apache-bullseye as src
 
 ARG UID
 ARG GID
@@ -11,7 +11,7 @@ ARG APACHE_STATUS_PASSWORD
 ENV APACHE_STATUS_USER=${APACHE_STATUS_USER}
 ENV APACHE_STATUS_PASSWORD=${APACHE_STATUS_PASSWORD}
 
-COPY ./sites-enabled/profile-fluid.conf /etc/apache2/sites-enabled/profile-fluid.conf
+COPY ./apt-sources.list /etc/apt/sources.list
 
 RUN apt update
 
@@ -24,7 +24,9 @@ RUN apt -y install \
     nodejs npm libfreetype6 libfreetype6-dev libpng-dev libjpeg-dev libpng-dev \
     zlib1g libzip-dev
 
-# Setup user authentification for status export
+FROM src as apache
+
+# Данные для аутентификации для экспорта статуса сервера
 RUN htpasswd -cb /etc/apache2/.htpasswd ${APACHE_STATUS_USER} ${APACHE_STATUS_PASSWORD}
 
 # Прокидываем права на файлы на пользователя Apache
@@ -35,11 +37,12 @@ RUN usermod -d /var/www www-data
 RUN chown -R www-data:www-data /var/www
 
 COPY ./apache2.conf /etc/apache2/apache2.conf
+COPY ./sites-enabled/profile-fluid.conf /etc/apache2/sites-enabled/profile-fluid.conf
 COPY ./mods-enabled/php.conf /etc/apache2/mods-enabled/php.conf
 
 RUN cp /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
 
-# Install additional PHP libraries
+# PHP расширения
 RUN docker-php-ext-install bcmath pdo_mysql gd zip
 
 # Устанавливаем composer
