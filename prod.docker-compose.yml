@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   apache-php:
+    build:
+      target: prod
     labels:
       - traefik.enable=true
       - traefik.docker.network=ingress_proxy

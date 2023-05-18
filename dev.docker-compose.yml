@@ -1,7 +1,12 @@
 version: '3.8'
 
+volumes:
+  profile-fluid_document-data: {}
+
 services:
   apache-php:
+    build:
+      target: dev
     labels:
       - traefik.enable=true
       - traefik.docker.network=indocker-app-network
@@ -11,6 +16,22 @@ services:
     networks:
       - indocker-app-network
 
+  minio:
+    container_name: profile-fluid_minio
+    image: bitnami/minio:2023.5.4-debian-11-r1
+    environment:
+      MINIO_ROOT_USER: ${STORAGE_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${STORAGE_SECRET_ACCESS_KEY}
+    volumes:
+      - profile-fluid_document-data:/data
+    ports:
+      - ${MINIO_EXTERNAL_PORT}:9001
+    networks:
+      profile-fluid:
+        ipv4_address: 172.21.0.5
+
 networks:
+  profile-fluid:
+    name: profile-fluid
   indocker-app-network:
     external: true

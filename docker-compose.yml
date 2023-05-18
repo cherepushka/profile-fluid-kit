@@ -14,7 +14,6 @@ services:
         - GID=${GID:-1000}
         - APACHE_STATUS_USER=${APACHE_STATUS_USER:-test}
         - APACHE_STATUS_PASSWORD=${APACHE_STATUS_PASSWORD:-test}
-      target: ${ENV}
     volumes:
       - ./apache-php/htdocs:/var/www/html
       - ./logs/apache:/var/log/apache2
