@@ -1,5 +1,5 @@
 # === APACHE ===
-FROM php:8.1.15-apache-bullseye as src
+FROM php:8.2.6-apache-bullseye as src
 
 ARG UID
 ARG GID

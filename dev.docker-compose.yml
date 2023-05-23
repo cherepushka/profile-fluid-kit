@@ -7,6 +7,8 @@ services:
   apache-php:
     build:
       target: dev
+    extra_hosts:
+      - host.docker.internal:host-gateway
     labels:
       - traefik.enable=true
       - traefik.docker.network=indocker-app-network
@@ -15,6 +17,32 @@ services:
       - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
     networks:
       - indocker-app-network
+
+  mariadb:
+    container_name: profile-fluid_mariadb
+    build:
+      context: ./mariadb
+    command: [
+      'mysqld',
+      '--collation-server=utf8_general_ci',
+      '--character-set-server=utf8',
+      '--log-bin=mysql-bin',
+      '--binlog-format=row',
+      '--binlog-row-image=full'
+    ]
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_ROOT_HOST: '*'
+    ports:
+      - ${DB_EXTERNAL_PORT}:3306
+    volumes:
+      - 'profile-fluid_data:/var/lib/mysql'
+      - './logs/mysql:/var/log/mysql'
+    networks:
+      - profile-fluid
 
   minio:
     container_name: profile-fluid_minio
