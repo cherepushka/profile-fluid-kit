@@ -43,11 +43,18 @@ COPY ./mods-enabled/php.conf /etc/apache2/mods-enabled/php.conf
 RUN cp /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
 
 # PHP расширения
-RUN docker-php-ext-install bcmath pdo_mysql gd zip
+RUN docker-php-ext-install bcmath pdo_mysql gd zip pcntl
+
+RUN docker-php-ext-configure pcntl --enable-pcntl
 
 # Устанавливаем composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
  && chmod 755 /usr/bin/composer
+
+COPY ./entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
+
+CMD ["/usr/local/bin/entrypoint"]
 
 # === DEV ===
 FROM apache AS dev
@@ -57,7 +64,6 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 ADD xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 USER www-data
-
 WORKDIR /var/www/html
 # === /DEV ===
 
@@ -65,6 +71,5 @@ WORKDIR /var/www/html
 FROM apache AS prod
 
 USER www-data
-
 WORKDIR /var/www/html
 # === /PROD ===

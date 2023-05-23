@@ -9,6 +9,7 @@ services:
     restart: unless-stopped
     build:
       context: ./apache-php
+      dockerfile: apache-php.Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -17,6 +18,8 @@ services:
     volumes:
       - ./apache-php/htdocs:/var/www/html
       - ./logs/apache:/var/log/apache2
+    environment:
+      - CONTAINER_ROLE=http
     networks:
       - profile-fluid
     security_opt: [no-new-privileges:true]

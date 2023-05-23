@@ -7,13 +7,59 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=ingress_proxy
+      - traefik.http.middlewares.profile-fluid-secure-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.profile-fluid-secure-redirect.redirectscheme.permanent=true
       - traefik.http.routers.fluid-profile-router.rule=Host(`profile.fluid-line.ru`)
       - traefik.http.routers.fluid-profile-router.service=fluid-profile-service
       - traefik.http.services.fluid-profile-service.loadbalancer.server.port=80
     networks:
       - ingress_proxy
+        
+  scheduler-php:
+    container_name: profile-fluid_scheduler-php
+    build:
+      context: ./apache-php
+      dockerfile: cli-php.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    volumes:
+      - ./apache-php/htdocs:/var/www/html
+    environment:
+      - CONTAINER_ROLE=scheduler
+    networks:
+      - profile-fluid
+    security_opt: [ no-new-privileges:true ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  queue-php:
+    container_name: profile-fluid_queue-php
+    build:
+      context: ./apache-php
+      dockerfile: cli-php.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    volumes:
+      - ./apache-php/htdocs:/var/www/html
+    environment:
+      - CONTAINER_ROLE=queue
+    networks:
+      - profile-fluid
+    security_opt: [ no-new-privileges:true ]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
+  profile-fluid:
+    name: profile-fluid
   ingress_proxy:
     name: ingress_proxy
     external: true
