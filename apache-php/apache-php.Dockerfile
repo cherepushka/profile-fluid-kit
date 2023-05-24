@@ -16,7 +16,7 @@ COPY ./apt-sources.list /etc/apt/sources.list
 RUN apt update
 
 # Устанавливаем зависимости для сборки
-RUN apt -y install \
+RUN apt -y install --no-install-recommends \
     rsync ca-certificates openssl openssh-server git tzdata openntpd \
     libxrender-dev fontconfig libc6-dev \
     default-mysql-client gnupg binutils-gold autoconf \

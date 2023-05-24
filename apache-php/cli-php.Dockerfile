@@ -10,7 +10,7 @@ COPY ./apt-sources.list /etc/apt/sources.list
 
 RUN apt update
 
-RUN apt -y install \
+RUN apt -y install --no-install-recommends \
     rsync ca-certificates openssl openssh-server git tzdata openntpd \
     libxrender-dev fontconfig libc6-dev cron \
     default-mysql-client gnupg binutils-gold autoconf \
