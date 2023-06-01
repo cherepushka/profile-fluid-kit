@@ -2,6 +2,7 @@ version: '3.8'
 
 volumes:
   profile-fluid_document-data: {}
+  profile-fluid_db-data: {}
 
 services:
   apache-php:
@@ -39,7 +40,7 @@ services:
     ports:
       - ${DB_EXTERNAL_PORT}:3306
     volumes:
-      - 'profile-fluid_data:/var/lib/mysql'
+      - 'profile-fluid_db-data:/var/lib/mysql'
       - './logs/mysql:/var/log/mysql'
     networks:
       - profile-fluid
@@ -56,7 +57,7 @@ services:
       - ${MINIO_EXTERNAL_PORT}:9001
     networks:
       profile-fluid:
-        ipv4_address: 172.21.0.5
+         ipv4_address: 172.20.0.2
 
 networks:
   profile-fluid:

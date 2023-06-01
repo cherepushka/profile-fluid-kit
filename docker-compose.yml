@@ -23,6 +23,10 @@ services:
     networks:
       - profile-fluid
     security_opt: [no-new-privileges:true]
+    labels:
+      logging: "promtail"
+      service: "apache-php"
+      site: "profile.fluid-line.ru"
 
   prometheus-apache-exporter:
     image: bitnami/apache-exporter:latest
@@ -37,6 +41,32 @@ services:
       - --scrape_uri=http://${APACHE_STATUS_USER:-test}:${APACHE_STATUS_PASSWORD:-test}@apache-php/server-status/?auto
     networks:
       - profile-fluid
+
+  promtail:
+    container_name: profile-fluid_promtail
+    restart: unless-stopped
+    image: grafana/promtail:2.8.2
+    volumes:
+      - ./promtail/config.yml:/etc/promtail/docker-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: [
+      '-config.file=/etc/promtail/docker-config.yml',
+      '-config.expand-env=true',
+#      '--dry-run', # Для тестирования
+    ]
+    environment:
+      LOKI_CLIENT_PUSH_ADDR: ${LOKI_CLIENT_PUSH_ADDR:-http://localhost/loki/api/push}
+      LOKI_CLIENT_BASIC_AUTH_USERNAME: ${LOKI_CLIENT_BASIC_AUTH_USERNAME:-user}
+      LOKI_CLIENT_BASIC_AUTH_PASSWORD: ${LOKI_CLIENT_BASIC_AUTH_PASSWORD:-password}
+    networks:
+      - 'profile-fluid'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      org.label-schema.group: "monitoring"
 
 networks:
   profile-fluid:
