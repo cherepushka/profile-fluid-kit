@@ -27,6 +27,11 @@ services:
       logging: "promtail"
       service: "apache-php"
       site: "profile.fluid-line.ru"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   prometheus-apache-exporter:
     image: bitnami/apache-exporter:latest
@@ -41,6 +46,11 @@ services:
       - --scrape_uri=http://${APACHE_STATUS_USER:-test}:${APACHE_STATUS_PASSWORD:-test}@apache-php/server-status/?auto
     networks:
       - profile-fluid
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   promtail:
     container_name: profile-fluid_promtail
