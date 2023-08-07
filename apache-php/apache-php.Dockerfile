@@ -22,7 +22,14 @@ RUN apt -y install --no-install-recommends \
     default-mysql-client gnupg binutils-gold autoconf \
     g++ gcc gnupg build-essential make python3 \
     nodejs npm libfreetype6 libfreetype6-dev libpng-dev libjpeg-dev libpng-dev \
-    zlib1g libzip-dev
+    zlib1g libzip-dev 
+
+# Устанавливаем конкретную версию nodejs
+RUN npm cache clean -f && \
+    npm install -g n && \
+    n 18.13
+  
+RUN npm install -g npm@9.8.1
 
 FROM src as apache
 

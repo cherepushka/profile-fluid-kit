@@ -57,7 +57,7 @@ services:
       - ${MINIO_EXTERNAL_PORT}:9001
     networks:
       profile-fluid:
-         ipv4_address: 172.20.0.2
+         ipv4_address: 172.22.0.15
 
 networks:
   profile-fluid:
