@@ -33,9 +33,6 @@ RUN npm install -g npm@9.8.1
 
 FROM src as apache
 
-# Данные для аутентификации для экспорта статуса сервера
-RUN htpasswd -cb /etc/apache2/.htpasswd ${APACHE_STATUS_USER} ${APACHE_STATUS_PASSWORD}
-
 # Прокидываем права на файлы на пользователя Apache
 RUN usermod -u ${UID} www-data
 RUN groupmod -g ${GID} www-data

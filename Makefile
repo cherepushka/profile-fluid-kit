@@ -24,6 +24,7 @@ stop:
 		-f dev.docker-compose.yml \
 		-f prod.docker-compose.yml stop
 
+# < https://habr.com/ru/post/714916 >
 up-dev-traefik:
 	docker run -d --rm \
 		-v /var/run/docker.sock:/var/run/docker.sock \
@@ -34,3 +35,4 @@ up-dev-traefik:
 
 stop-dev-traefik:
 	docker stop indocker.app
+# </>
