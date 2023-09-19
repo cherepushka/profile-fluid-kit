@@ -19,7 +19,7 @@
 * `XDebug` для PHP по адресу `127.0.0.1:9003`
 * MariaDB (Mysql) база данных по адресу:
 * * Хост: `127.0.0.1` (`profile-fluid_mariadb` - хост внутри контейнеров)
-* * Порт: `DB_EXTERNAL_PORT` из .env файла
+* * Порт: `DB_EXTERNAL_PORT` из .env файла (`3306` - для доступа из других контейнеров)
 * * Логин: `DB_USER` из .env файла
 * * Пароль: `DB_USER_PASSWORD` из .env файла
 * * Имя базы: `DB_DATABASE` из .env файла
