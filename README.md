@@ -18,7 +18,7 @@
 * https://fluid-profile.indocker.app - локальный адрес сайта, по которому он будет доступен из браузера
 * `XDebug` для PHP по адресу `127.0.0.1:9003`
 * MariaDB (Mysql) база данных по адресу:
-* * Хост: `127.0.0.1`
+* * Хост: `127.0.0.1` (`profile-fluid_mariadb` - хост внутри контейнеров)
 * * Порт: `DB_EXTERNAL_PORT` из .env файла
 * * Логин: `DB_USER` из .env файла
 * * Пароль: `DB_USER_PASSWORD` из .env файла
