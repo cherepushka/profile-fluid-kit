@@ -15,6 +15,11 @@
 
 После этого будут доступны:
 * http://localhost:`MINIO_EXTERNAL_PORT`, где `MINIO_EXTERNAL_PORT` - значение переменной из `.env` файла. Это админ панель `MinIO`.  `STORAGE_ACCESS_KEY_ID` и `STORAGE_SECRET_ACCESS_KEY` переменные из `.env` файла - логин и пароль соответсвенно
+* Само S3 хранилище по `${IP S3 контейнера}:9000`, где `${IP S3 контейнера}` можно узнать через команду:  
+`docker inspect profile-fluid_minio -f '{{(index .NetworkSettings.Networks "profile-fluid").IPAddress}}'`  
+(по этому адресу можно обратиться к S3 из других контейнеров)
+* * `KEY ID` - переменная `STORAGE_ACCESS_KEY_ID`
+* * `SECRET KEY` - переменная `STORAGE_SECRET_ACCESS_KEY`
 * https://fluid-profile.indocker.app - локальный адрес сайта, по которому он будет доступен из браузера
 * `XDebug` для PHP по адресу `127.0.0.1:9003`
 * MariaDB (Mysql) база данных по адресу:
